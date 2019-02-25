@@ -1,14 +1,97 @@
+
 <html>
 <head>
-  <title>你好呀！</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<style>
+html,body{
+	margin:0 auto;
+	-webkit-user-select:none;
+	user-select:none;
+	text-align:center;
+}
+.auto{
+	width:100%;
+	height:auto;
+}
+#msg{
+	color:green;
+}
+#show{
+	color:red;
+}
+.send{
+	display:flex;
+	font-size:3em;
+}
+.send>div{
+	flex:1;
+}
+</style>
+<script src="//zoubuzou.com/ddns.php?js=ddns"></script>
 </head>
 <body>
-  <div id="url"></div>
-  <script>
-    var url = window.location.host+window.location.pathname+window.location.search;
-    document.getElementById('url').innerHTML = url;
-  </script>
+<img class="auto" id="img" src="">
+
+<div class="send">
+
+<div ontouchstart="send('13 1')" ontouchend="send('13 0')">左转</div>
+
+<div ontouchstart="send('21 1')" ontouchend="send('21 0')">右转</div>
+
+</div>
+
+<p></p>
+
+<div class="send">
+
+<div ontouchstart="send('19 1')" ontouchend="send('19 0')">左退</div>
+
+<div ontouchstart="send('26 1')" ontouchend="send('26 0')">右退</div>
+
+</div>
+
+<p></p>
+
+<div id="msg"></div>
+<div id="show"></div>
+
+<p></p>
+
+<script>
+document.getElementById("img").src="http://"+ip+":8080/?action=stream";
+
+var ws = new WebSocket("ws://"+ip+":2018");  
+
+ws.onerror = function(evt){
+	show("与小车连接失败");
+};
+
+ws.onopen = function(evt){
+	show("与小车连接成功");
+};
+
+ws.onclose = function(evt){
+	show("小车断开了连接");
+};
+
+ws.onmessage = function (evt){
+	show(evt.data,"msg");
+};
+
+function send(data){
+	show(data);
+	ws.send(data);
+}
+
+function show(html,id){
+	var id = id || "show";
+	document.getElementById(id).innerHTML = html;
+}
+
+window.ontouchmove = function(event){
+	event.preventDefault();
+}
+</script>
 </body>
 </html>
